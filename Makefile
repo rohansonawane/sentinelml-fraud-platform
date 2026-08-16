@@ -9,6 +9,11 @@ export MKL_NUM_THREADS := 1
 export OPENBLAS_NUM_THREADS := 1
 export VECLIB_MAXIMUM_THREADS := 1
 export KMP_DUPLICATE_LIB_OK := TRUE
+export OMP_NUM_THREADS := 1
+export MKL_NUM_THREADS := 1
+export OPENBLAS_NUM_THREADS := 1
+export VECLIB_MAXIMUM_THREADS := 1
+export KMP_DUPLICATE_LIB_OK := TRUE
 
 .PHONY: setup data smoke train evaluate test lint typecheck serve ui docker-up docker-down benchmark docs stream-demo drift-demo
 
