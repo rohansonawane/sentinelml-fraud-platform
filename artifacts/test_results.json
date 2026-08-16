@@ -1,0 +1,9 @@
+{
+  "command": "pytest tests -q --tb=short",
+  "passed": 34,
+  "failed": 0,
+  "errors": 0,
+  "warnings": 1,
+  "seconds": 4.68,
+  "note": "Measured on this host after make train. Starlette TestClient deprecation warning only."
+}

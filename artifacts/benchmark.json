@@ -1,0 +1,13 @@
+{
+  "n_requests": 200,
+  "concurrency": 1,
+  "backend": "TestClient",
+  "elapsed_seconds": 0.6268141249893233,
+  "throughput_rps": 319.0738562303564,
+  "latency_ms_p50": 2.867437491659075,
+  "latency_ms_p95": 4.168308951193467,
+  "latency_ms_p99": 4.672619061020669,
+  "error_rate": 0.0,
+  "errors": 0,
+  "note": "Measured on this host. Do not claim 5000 TPS."
+}

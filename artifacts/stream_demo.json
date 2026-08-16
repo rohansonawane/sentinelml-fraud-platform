@@ -1,0 +1,15 @@
+{
+  "backend": "memory",
+  "kafka_started": false,
+  "kafka_note": "Docker daemon was DOWN. Kafka was not started. In-process queue used.",
+  "n_events_submitted": 500,
+  "n_processed": 500,
+  "n_alerts": 30,
+  "n_errors": 0,
+  "elapsed_seconds": 5.001555499999085,
+  "target_rate_eps": 100,
+  "actual_throughput_eps": 99.9688996753293,
+  "predictions_queued": 500,
+  "all_processed": true,
+  "avg_infer_latency_ms": 0.35821752197807655
+}

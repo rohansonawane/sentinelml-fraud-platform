@@ -1,0 +1,50 @@
+{
+  "collected_at": "2026-08-16T16:26:47.131936+00:00",
+  "python": "3.11.12 (main, Apr  8 2025, 14:15:29) [Clang 17.0.0 (clang-1700.0.13.3)]",
+  "platform": "macOS-26.5.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "processor": "arm",
+  "sentinelml_version": "0.1.0",
+  "cpu_count": 10,
+  "disk_free_gb": 83.52,
+  "disk_total_gb": 460.43,
+  "torch": {
+    "installed": true,
+    "version": "2.13.0"
+  },
+  "lightgbm": {
+    "installed": true,
+    "version": "4.7.0"
+  },
+  "sklearn": {
+    "installed": true,
+    "version": "1.9.0"
+  },
+  "mlflow": {
+    "installed": true,
+    "version": "2.22.5"
+  },
+  "optuna": {
+    "installed": true,
+    "version": "4.9.0"
+  },
+  "shap": {
+    "installed": false,
+    "error": "No module named 'shap'"
+  },
+  "feast": {
+    "installed": false,
+    "error": "No module named 'feast'"
+  },
+  "evidently": {
+    "installed": false,
+    "error": "No module named 'evidently'"
+  },
+  "kafka": {
+    "installed": true,
+    "version": "2.3.2"
+  },
+  "mps_available": true,
+  "cuda_available": false,
+  "notes": "Apple Silicon M4, no NVIDIA GPU. Docker daemon was down at discovery; Kafka was not started. Feast/Evidently/SHAP are optional extras."
+}

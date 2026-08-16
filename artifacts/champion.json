@@ -1,0 +1,11 @@
+{
+  "model": "xgboost",
+  "threshold": 0.2648,
+  "strategy": "minimize_configured_cost",
+  "calibration": "none",
+  "test_pr_auc": 0.8083109924614793,
+  "test_recall": 0.8421052631578947,
+  "test_fpr": 0.022461814914645103,
+  "test_expected_cost": 175.0,
+  "why": "Highest composite selection_score=0.8665 using PR-AUC, recall, inverted FPR, inverted expected cost, latency, and memory. Not selected on AUROC alone. Isolation Forest is never auto-champion over a supervised model unless it wins this score."
+}

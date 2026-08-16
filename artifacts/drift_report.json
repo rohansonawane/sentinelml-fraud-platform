@@ -1,0 +1,187 @@
+{
+  "n_reference": 3000,
+  "n_current": 3000,
+  "features": {
+    "amount": {
+      "psi": 2.998190970158512,
+      "js": 0.36775706264147573,
+      "missing_rate": 0.0,
+      "mean_ref": 117.41606,
+      "mean_cur": 497.92597122697026,
+      "alert": true
+    },
+    "hour": {
+      "psi": 20.306851265579137,
+      "js": 0.4917651004015451,
+      "missing_rate": 0.0,
+      "mean_ref": 13.153333333333334,
+      "mean_cur": 1.95,
+      "alert": true
+    },
+    "day_of_week": {
+      "psi": 0.017797613822459535,
+      "js": 0.0022225296302487603,
+      "missing_rate": 0.0,
+      "mean_ref": 2.970666666666667,
+      "mean_cur": 3.054333333333333,
+      "alert": false
+    },
+    "is_weekend": {
+      "psi": 0.0,
+      "js": 0.0,
+      "missing_rate": 0.0,
+      "mean_ref": 0.25933333333333336,
+      "mean_cur": 0.30766666666666664,
+      "alert": false
+    },
+    "tx_count_10m": {
+      "psi": 0.0,
+      "js": 0.0,
+      "missing_rate": 0.0,
+      "mean_ref": 0.0023333333333333335,
+      "mean_cur": 0.006,
+      "alert": false
+    },
+    "tx_count_1h": {
+      "psi": 0.0,
+      "js": 0.0,
+      "missing_rate": 0.0,
+      "mean_ref": 0.008666666666666666,
+      "mean_cur": 0.036,
+      "alert": false
+    },
+    "tx_count_24h": {
+      "psi": 0.00021585848615004826,
+      "js": 2.6981407506513917e-05,
+      "missing_rate": 0.0,
+      "mean_ref": 0.201,
+      "mean_cur": 0.20366666666666666,
+      "alert": false
+    },
+    "amount_sum_1h": {
+      "psi": 0.0,
+      "js": 0.0,
+      "missing_rate": 0.0,
+      "mean_ref": 1.0277033333333332,
+      "mean_cur": 16.45034245134851,
+      "alert": false
+    },
+    "amount_sum_24h": {
+      "psi": 0.04044608368714398,
+      "js": 0.01813642792111278,
+      "missing_rate": 0.0,
+      "mean_ref": 24.189293333333335,
+      "mean_cur": 100.03413948695024,
+      "alert": false
+    },
+    "avg_amount_7d": {
+      "psi": 3.192201949303037,
+      "js": 0.36784203228155576,
+      "missing_rate": 0.0,
+      "mean_ref": 117.42405472222222,
+      "mean_cur": 506.8128208108688,
+      "alert": true
+    },
+    "amount_vs_customer_mean": {
+      "psi": 0.15381695307401036,
+      "js": 0.02387188099360594,
+      "missing_rate": 0.0,
+      "mean_ref": 1.2232503439117446,
+      "mean_cur": 1.3129462233507387,
+      "alert": false
+    },
+    "amount_zscore_customer": {
+      "psi": 0.009548515520532125,
+      "js": 0.0015450700043734085,
+      "missing_rate": 0.0,
+      "mean_ref": -979.0416868602056,
+      "mean_cur": -5413.316269552705,
+      "alert": false
+    },
+    "merchant_tx_count_24h": {
+      "psi": 12.537760916130104,
+      "js": 0.26424462112650143,
+      "missing_rate": 0.0,
+      "mean_ref": 0.928,
+      "mean_cur": 0.0,
+      "alert": true
+    },
+    "merchant_fraud_rate_historical": {
+      "psi": 3.9835321035267794,
+      "js": 0.07555801618171412,
+      "missing_rate": 0.0,
+      "mean_ref": 0.026681677553451744,
+      "mean_cur": 0.0,
+      "alert": true
+    },
+    "merchant_avg_amount": {
+      "psi": 3.768846199375365,
+      "js": 0.43014723684318246,
+      "missing_rate": 0.0,
+      "mean_ref": 114.06844525374645,
+      "mean_cur": 497.92597122697026,
+      "alert": true
+    },
+    "new_merchant_for_customer": {
+      "psi": 0.0,
+      "js": 0.0,
+      "missing_rate": 0.0,
+      "mean_ref": 0.6173333333333333,
+      "mean_cur": 1.0,
+      "alert": false
+    },
+    "time_since_previous_transaction": {
+      "psi": 0.07690238024878418,
+      "js": 0.0053865888849802986,
+      "missing_rate": 0.0,
+      "mean_ref": 427855.9506666667,
+      "mean_cur": 430814.68233333336,
+      "alert": false
+    },
+    "merchant_frequency_customer": {
+      "psi": 7.923617337552566,
+      "js": 0.15547328729456994,
+      "missing_rate": 0.0,
+      "mean_ref": 0.5653333333333334,
+      "mean_cur": 0.0,
+      "alert": true
+    }
+  },
+  "schema": {
+    "missing_in_actual": [],
+    "unexpected": []
+  },
+  "alerted_features": [
+    "amount",
+    "hour",
+    "avg_amount_7d",
+    "merchant_tx_count_24h",
+    "merchant_fraud_rate_historical",
+    "merchant_avg_amount",
+    "merchant_frequency_customer"
+  ],
+  "drift_detected": true,
+  "psi_alert_threshold": 0.2,
+  "js_alert_threshold": 0.1,
+  "backend": "psi_js",
+  "note": "Evidently extra is optional; this report uses a deterministic PSI/JS detector.",
+  "prediction_drift": {
+    "psi": 2.998190970158512,
+    "js": 0.36775706264147573,
+    "mean_ref": 117.41606,
+    "mean_cur": 497.92597122697026
+  },
+  "induced": {
+    "amount_scale": "x2.5-6.0",
+    "new_merchants": true,
+    "activity_hours": "shifted to 00:00-04:00",
+    "fraud_prevalence": 0.176,
+    "reference_prevalence": 0.030333333333333334
+  },
+  "performance_drift": {
+    "note": "Labels exist on the simulator; prevalence shifted by construction.",
+    "ref_prevalence": 0.030333333333333334,
+    "cur_prevalence": 0.176,
+    "alert": true
+  }
+}

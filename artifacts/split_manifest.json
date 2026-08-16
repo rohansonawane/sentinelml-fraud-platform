@@ -1,0 +1,23 @@
+{
+  "method": "temporal",
+  "lookahead": false,
+  "train_start": "2025-01-01T00:01:42+00:00",
+  "train_end": "2025-02-23T23:53:37.200000+00:00",
+  "val_end": "2025-03-13T23:50:55.600000+00:00",
+  "test_end": "2025-03-31T23:48:14+00:00",
+  "n_train": 3608,
+  "n_val": 1241,
+  "n_test": 1151,
+  "fraud_rate_train": 0.030210643015521066,
+  "fraud_rate_val": 0.035455278001611606,
+  "fraud_rate_test": 0.03301476976542137,
+  "hashes": {
+    "train": "0ce811bb235b963d52e7379d013920ef01b83d7d5593963eaaaf638f2667451a",
+    "val": "a3a680a95c5b42f3403f935e0552f0dc1ba619d9697b8bc44816f5db3cc9cefb",
+    "test": "3b0c13c346b5809fc67b41604c2612d5c89f3324b84806df9e96ed1ef705ec11",
+    "full": "b79675a0efc5b26d1343ce3906ee00e16c1aafc4ec2eb74ad01e269096fa70df",
+    "boundaries": "545890d9a5ab4dbf2e1416442b9fba5bb753afd421792117dd0d82b4f48a57a1"
+  },
+  "notes": "TRAIN is earlier, VAL later, TEST latest. Rolling features use only information strictly before the current transaction. Merchant fraud rate uses delayed labels.",
+  "label_delay_days": 7
+}

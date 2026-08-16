@@ -1,0 +1,70 @@
+{
+  "champion": "xgboost",
+  "challenger": "mlp_torch",
+  "aliases": {
+    "champion": "xgboost",
+    "challenger": "mlp_torch"
+  },
+  "promotion_gate": {
+    "promote": true,
+    "reasons": [
+      "gates passed"
+    ]
+  },
+  "why": "Highest composite selection_score=0.8665 using PR-AUC, recall, inverted FPR, inverted expected cost, latency, and memory. Not selected on AUROC alone. Isolation Forest is never auto-champion over a supervised model unless it wins this score.",
+  "selection_weights": {
+    "pr_auc": 0.35,
+    "recall": 0.2,
+    "fpr_inverted": 0.15,
+    "cost_inverted": 0.2,
+    "latency_inverted": 0.05,
+    "memory_inverted": 0.05
+  },
+  "ranked": [
+    {
+      "model": "xgboost",
+      "selection_score": 0.8664959437228239,
+      "pr_auc": 0.8083109924614793
+    },
+    {
+      "model": "mlp_torch",
+      "selection_score": 0.8601467235109471,
+      "pr_auc": 0.8070243326641175
+    },
+    {
+      "model": "lightgbm",
+      "selection_score": 0.85857631047539,
+      "pr_auc": 0.8184638952638611
+    },
+    {
+      "model": "hist_gradient_boosting",
+      "selection_score": 0.8547209640033563,
+      "pr_auc": 0.7751410217763259
+    },
+    {
+      "model": "logistic_regression",
+      "selection_score": 0.8213667826775116,
+      "pr_auc": 0.7458513245766447
+    },
+    {
+      "model": "rule_amount",
+      "selection_score": 0.7594700307006411,
+      "pr_auc": 0.676017907197435
+    },
+    {
+      "model": "mlp_sklearn",
+      "selection_score": 0.7161576976574988,
+      "pr_auc": 0.6136248697931125
+    },
+    {
+      "model": "isolation_forest",
+      "selection_score": 0.5393086843155573,
+      "pr_auc": 0.17620126447148926
+    },
+    {
+      "model": "dummy_majority",
+      "selection_score": 0.31155516941789746,
+      "pr_auc": 0.03301476976542137
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "skipped": false,
+  "best_params": {
+    "n_estimators": 107,
+    "max_depth": 3,
+    "learning_rate": 0.04235731615410186,
+    "num_leaves": 15
+  },
+  "best_value": 0.8472513111249091,
+  "n_trials": 4
+}
