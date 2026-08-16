@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sentinelml-config
+data:
+  SENTINELML_ENV: "production"
+  API_PORT: "8102"
+  STREAM_BACKEND: "kafka"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  ONLINE_STORE_BACKEND: "redis"
+  DECISION_ALLOW_MAX: "0.20"
+  DECISION_REVIEW_MAX: "0.70"
+  MLFLOW_TRACKING_URI: "http://mlflow:5102"

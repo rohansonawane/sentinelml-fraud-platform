@@ -1,0 +1,14 @@
+backend: memory  # memory | kafka
+kafka_bootstrap: localhost:9092
+topics:
+  raw: transactions.raw
+  enriched: transactions.enriched
+  predictions: fraud.predictions
+  alerts: fraud.alerts
+  feedback: model.feedback
+schema_version: "1.0"
+idempotency_ttl_seconds: 3600
+demo:
+  default_rate: 100
+  rates: [10, 100, 500]
+  n_events: 500

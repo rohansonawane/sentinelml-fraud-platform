@@ -1,0 +1,13 @@
+# MODELING ASSUMPTIONS — not bank or network costs.
+# Used only to simulate expected cost on validation/test splits.
+# Do not treat these as production loss estimates.
+
+false_positive: 1.0
+false_negative: 25.0
+true_positive: 0.0
+true_negative: 0.0
+
+notes: >
+  FP cost is a review/friction unit. FN cost is a missed-fraud unit.
+  Ratio 25:1 is a research default for this repository, not a calibrated
+  issuer or acquirer loss model.

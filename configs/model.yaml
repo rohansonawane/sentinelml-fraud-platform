@@ -1,0 +1,83 @@
+seed: 42
+data_path: data/generated/transactions.parquet
+artifacts_dir: artifacts
+label_delay_days: 7
+
+# Temporal split is by timestamp, never random. Boundaries are computed from
+# the generated series (60% train / 20% val / 20% test of the time span) and
+# written to artifacts/split_manifest.json.
+split:
+  train_fraction: 0.60
+  val_fraction: 0.20
+  test_fraction: 0.20
+
+optuna:
+  n_trials: 8
+  timeout_seconds: 90
+  metric: pr_auc
+
+selection:
+  # Champion score is NOT AUROC-only.
+  weights:
+    pr_auc: 0.35
+    recall: 0.20
+    fpr_inverted: 0.15
+    cost_inverted: 0.20
+    latency_inverted: 0.05
+    memory_inverted: 0.05
+
+thresholds:
+  # Locked on VALIDATION only, then applied to test.
+  strategies:
+    - maximize_f1
+    - maximize_recall_at_max_fpr
+    - minimize_configured_cost
+  max_fpr: 0.05
+  default_strategy: minimize_configured_cost
+
+decision:
+  allow_max: 0.20
+  review_max: 0.70
+  default_ambiguous: REVIEW
+
+models:
+  dummy:
+    enabled: true
+  logistic:
+    enabled: true
+    C: 1.0
+    class_weight: balanced
+    max_iter: 400
+  lightgbm:
+    enabled: true
+    n_estimators: 80
+    max_depth: 4
+    learning_rate: 0.08
+    num_leaves: 24
+  hist_gbdt:
+    enabled: true
+    max_iter: 80
+    max_depth: 4
+    learning_rate: 0.08
+  mlp_torch:
+    enabled: true
+    hidden_dims: [32, 16]
+    epochs: 12
+    batch_size: 256
+    lr: 0.01
+  mlp_sklearn:
+    enabled: true
+    hidden_layer_sizes: [32, 16]
+    max_iter: 80
+  isolation_forest:
+    enabled: true
+    n_estimators: 80
+    contamination: 0.03
+    note: "Anomaly detector. Not claimed superior to supervised models."
+
+calibration:
+  methods: [none, platt, isotonic]
+  apply_if_improves: brier
+  reject_if_hurts:
+    pr_auc_drop: 0.02
+    cost_increase_ratio: 0.15
