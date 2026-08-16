@@ -1,0 +1,15 @@
+# Feast feature store configuration.
+# Feast is optional. SentinelML's smoke path uses sentinelml.features.store
+# (ParquetOfflineStore + InMemory/Redis OnlineStore) which mirrors this layout.
+# When Feast is installed: `feast apply` from this directory.
+
+project: sentinelml
+registry: data/generated/feast_registry.db
+provider: local
+online_store:
+  type: redis
+  connection_string: localhost:6379
+  # Smoke fallback is in-memory; Redis is used when reachable.
+offline_store:
+  type: file
+entity_key_serialization_version: 2
