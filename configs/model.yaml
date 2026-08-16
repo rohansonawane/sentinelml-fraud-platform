@@ -1,4 +1,5 @@
 seed: 42
+device: cpu
 data_path: data/generated/transactions.parquet
 artifacts_dir: artifacts
 label_delay_days: 7
@@ -74,6 +75,12 @@ models:
     n_estimators: 80
     contamination: 0.03
     note: "Anomaly detector. Not claimed superior to supervised models."
+  xgboost:
+    enabled: true
+    n_estimators: 80
+    max_depth: 4
+    learning_rate: 0.08
+    device: cpu
 
 calibration:
   methods: [none, platt, isotonic]

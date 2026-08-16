@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,9 +27,16 @@ LATENCY = Histogram("sentinelml_request_latency_seconds", "API latency")
 async def lifespan(app: FastAPI):
     settings = get_settings()
     configure_logging(settings.log_level)
-    policy = DecisionPolicy(allow_max=settings.decision_allow_max, review_max=settings.decision_review_max)
+    policy = DecisionPolicy(
+        allow_max=settings.decision_allow_max, review_max=settings.decision_review_max
+    )
+    model_dir = Path(settings.model_dir)
     app.state.settings = settings
-    app.state.inference = InferenceService(policy=policy)
+    app.state.inference = InferenceService(
+        policy=policy,
+        bundle_path=model_dir / "champion.joblib",
+        preprocessor_path=model_dir / "preprocessor.joblib",
+    )
     app.state.feature_state = FeatureState(label_delay_days=settings.feature_label_delay_days)
     online = build_online_store(settings.online_store_backend, settings.redis_url)
     app.state.feature_store = FeatureStore(
@@ -74,7 +82,9 @@ def create_app() -> FastAPI:
 
     @app.exception_handler(HTTPException)
     async def http_exc(_, exc: HTTPException):
-        return JSONResponse({"error": exc.detail, "status": exc.status_code}, status_code=exc.status_code)
+        return JSONResponse(
+            {"error": exc.detail, "status": exc.status_code}, status_code=exc.status_code
+        )
 
     app.include_router(router)
     return app
@@ -87,4 +97,6 @@ def run() -> None:
     import uvicorn
 
     settings = get_settings()
-    uvicorn.run("sentinelml.api.app:app", host=settings.api_host, port=settings.api_port, reload=False)
+    uvicorn.run(
+        "sentinelml.api.app:app", host=settings.api_host, port=settings.api_port, reload=False
+    )

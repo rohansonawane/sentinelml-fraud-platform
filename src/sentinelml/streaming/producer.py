@@ -22,7 +22,9 @@ class TransactionProducer:
         self.topic = topic
 
     def send(self, event: TransactionEvent | dict[str, Any]) -> None:
-        payload = event.model_dump(mode="json") if isinstance(event, TransactionEvent) else dict(event)
+        payload = (
+            event.model_dump(mode="json") if isinstance(event, TransactionEvent) else dict(event)
+        )
         payload.setdefault("schema_version", "1.0")
         self.broker.publish(self.topic, payload, key=str(payload.get("transaction_id")))
 

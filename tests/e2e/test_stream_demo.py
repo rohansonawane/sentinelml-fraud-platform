@@ -11,7 +11,10 @@ from sentinelml.streaming.producer import TOPICS, TransactionProducer, row_to_ev
 
 
 def test_stream_demo_all_processed(tiny_tx) -> None:
-    events = [row_to_event(r) for r in tiny_tx.head(50).sort_values("event_time").to_dict(orient="records")]
+    events = [
+        row_to_event(r)
+        for r in tiny_tx.head(50).sort_values("event_time").to_dict(orient="records")
+    ]
     broker = InMemoryBroker()
     producer = TransactionProducer(broker)
     proc = StreamProcessor(broker)

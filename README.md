@@ -74,12 +74,29 @@ make serve          # API :8102
 make ui             # dashboard :3102
 ```
 
+## NVIDIA GPU (large simulator)
+
+On a Linux machine with an NVIDIA GPU:
+
+```bash
+git clone https://github.com/rohansonawane/sentinelml-fraud-platform.git
+cd sentinelml-fraud-platform
+make gpu-setup && make gpu-check
+make gpu-data
+make gpu-train
+make gpu-eval
+make gpu-serve
+```
+
+~200k transactions + GPU XGBoost / larger MLP. Million-row: `make gpu-data-full` then `make gpu-train GPU_CONFIG=configs/cuda/full.yaml`. Details: [GPU_SETUP.md](GPU_SETUP.md). GPU metrics live in `artifacts/gpu/`, not in the Mac table above.
+
 ## Limitations
 
 - Synthetic / research data. Not a bank portfolio.
 - FP=1, FN=25 are **modeling assumptions**, not issuer costs.
 - Fraud evolves; this snapshot will drift.
-- Kafka was **not started** (Docker daemon down at discovery); `make stream-demo` uses the in-process queue.
+- Kafka was **not started** on the Mac (Docker daemon down at discovery); `make stream-demo` uses the in-process queue.
+- CUDA training is for an NVIDIA box — see [GPU_SETUP.md](GPU_SETUP.md). Not run on this Mac.
 - Feast layout is real; smoke uses the compatible OfflineStore/OnlineStore in `sentinelml.features.store`. SHAP and Evidently were not installed; tree importances / PSI-JS are the fallbacks.
 - BLOCK is not a production payment action without legal/business validation.
 

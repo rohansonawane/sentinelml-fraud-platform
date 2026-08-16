@@ -204,4 +204,8 @@ def redis_status(url: str) -> dict[str, Any]:
 
     if isinstance(store, RedisOnlineStore):
         return {"backend": "redis", "ok": store.ping()}
-    return {"backend": "memory", "ok": True, "note": "Redis unavailable; using in-memory online store"}
+    return {
+        "backend": "memory",
+        "ok": True,
+        "note": "Redis unavailable; using in-memory online store",
+    }

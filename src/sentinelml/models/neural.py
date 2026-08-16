@@ -58,6 +58,7 @@ class TorchMLPModel:
         epochs: int = 12,
         batch_size: int = 256,
         lr: float = 0.01,
+        device: str = "cpu",
     ) -> None:
         self.hidden_dims = hidden_dims or [32, 16]
         self.epochs = epochs
@@ -65,11 +66,7 @@ class TorchMLPModel:
         self.lr = lr
         self.scaler = StandardScaler()
         self.model: Any = None
-        self.device = "cpu"
-        if HAS_TORCH and torch is not None:
-            if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-                # MPS can be brittle on tiny batches; CPU is fine for smoke-scale MLP.
-                self.device = "cpu"
+        self.device = device if device in {"cpu", "cuda"} else "cpu"
 
     def fit(self, x: np.ndarray, y: np.ndarray) -> None:
         if not HAS_TORCH or torch is None or nn is None:
@@ -86,17 +83,25 @@ class TorchMLPModel:
         tensor_y = torch.from_numpy(ys).to(self.device)
         n = len(xs)
         self.model.train()
+        use_amp = self.device == "cuda"
+        scaler = torch.amp.GradScaler("cuda") if use_amp else None
         for _ in range(self.epochs):
             perm = np.random.permutation(n)
             for start in range(0, n, self.batch_size):
                 idx = perm[start : start + self.batch_size]
                 batch_x = tensor_x[idx]
                 batch_y = tensor_y[idx]
-                opt.zero_grad()
-                logits = self.model(batch_x)
-                loss = loss_fn(logits, batch_y)
-                loss.backward()
-                opt.step()
+                opt.zero_grad(set_to_none=True)
+                with torch.autocast(device_type="cuda", enabled=use_amp):
+                    logits = self.model(batch_x)
+                    loss = loss_fn(logits, batch_y)
+                if scaler is not None:
+                    scaler.scale(loss).backward()
+                    scaler.step(opt)
+                    scaler.update()
+                else:
+                    loss.backward()
+                    opt.step()
 
     def predict_proba(self, x: np.ndarray) -> np.ndarray:
         if not HAS_TORCH or torch is None or self.model is None:

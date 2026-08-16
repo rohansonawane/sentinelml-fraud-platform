@@ -38,7 +38,9 @@ class InferenceService:
         self.calibrator = bundle.get("calibrator")
         self.threshold = float(bundle.get("threshold", 0.5))
         self.scaled = bool(bundle.get("scaled", False))
-        self.model_name = str(bundle.get("name", self.model.name if hasattr(self.model, "name") else "unknown"))
+        self.model_name = str(
+            bundle.get("name", self.model.name if hasattr(self.model, "name") else "unknown")
+        )
         self.feature_names = list(bundle.get("feature_names", FEATURE_NAMES))
         pre = Path(preprocessor_path)
         if pre.exists():

@@ -20,7 +20,9 @@ def test_online_store_roundtrip() -> None:
 def test_consistency_on_repeated_state() -> None:
     state = FeatureState(label_delay_days=7)
     row = {
-        "event_time": __import__("datetime").datetime(2025, 1, 2, tzinfo=__import__("datetime").timezone.utc),
+        "event_time": __import__("datetime").datetime(
+            2025, 1, 2, tzinfo=__import__("datetime").timezone.utc
+        ),
         "customer_id": "C1",
         "merchant_id": "M1",
         "amount": 10.0,

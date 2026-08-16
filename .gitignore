@@ -46,6 +46,7 @@ mlartifacts/
 # small joblib bundles from smoke (< 2 MB) are committed under artifacts/
 artifacts/*.db
 artifacts/audit.db
+artifacts/gpu/
 
 # Node
 dashboard/node_modules/

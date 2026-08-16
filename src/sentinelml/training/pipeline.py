@@ -37,6 +37,7 @@ from sentinelml.training.registry import configure_mlflow, log_metrics_safe, pro
 from sentinelml.training.selection import pick_champion
 from sentinelml.training.thresholds import lock_thresholds
 from sentinelml.utils.config import load_yaml
+from sentinelml.utils.device import requested_device, resolve_torch_device, resolve_xgboost_device
 from sentinelml.utils.hashing import sha256_json
 from sentinelml.utils.logging import get_logger
 
@@ -75,9 +76,14 @@ def build_feature_tables(
     return split, train_f, val_f, test_f
 
 
-def _instantiate_models(cfg: dict[str, Any], lgb_params: dict[str, Any] | None = None) -> dict[str, Any]:
+def _instantiate_models(
+    cfg: dict[str, Any], lgb_params: dict[str, Any] | None = None
+) -> dict[str, Any]:
     models: dict[str, Any] = {}
     mcfg = cfg.get("models", {})
+    req = requested_device(cfg)
+    torch_device = resolve_torch_device(req)
+    xgb_device = resolve_xgboost_device(req)
     if mcfg.get("dummy", {}).get("enabled", True):
         models["dummy_majority"] = DummyBaseline()
         models["rule_amount"] = AmountRuleBaseline()
@@ -104,8 +110,15 @@ def _instantiate_models(cfg: dict[str, Any], lgb_params: dict[str, Any] | None =
             max_depth=int(h.get("max_depth", 4)),
             learning_rate=float(h.get("learning_rate", 0.08)),
         )
-    if HAS_XGBOOST:
-        models["xgboost"] = XGBoostModel()
+    if mcfg.get("xgboost", {}).get("enabled", True) and HAS_XGBOOST:
+        x = dict(mcfg.get("xgboost", {}))
+        x.pop("enabled", None)
+        models["xgboost"] = XGBoostModel(
+            n_estimators=int(x.get("n_estimators", 80)),
+            max_depth=int(x.get("max_depth", 4)),
+            learning_rate=float(x.get("learning_rate", 0.08)),
+            device=str(x.get("device", xgb_device)),
+        )
     if mcfg.get("mlp_torch", {}).get("enabled", True) and HAS_TORCH:
         t = mcfg.get("mlp_torch", {})
         models["mlp_torch"] = TorchMLPModel(
@@ -113,6 +126,7 @@ def _instantiate_models(cfg: dict[str, Any], lgb_params: dict[str, Any] | None =
             epochs=int(t.get("epochs", 12)),
             batch_size=int(t.get("batch_size", 256)),
             lr=float(t.get("lr", 0.01)),
+            device=str(t.get("device", torch_device)),
         )
     if mcfg.get("mlp_sklearn", {}).get("enabled", True):
         s = mcfg.get("mlp_sklearn", {})
@@ -170,7 +184,9 @@ def train_from_config(
     x_train_s = scaler.fit_transform(x_train)
     x_val_s = scaler.transform(x_val)
     x_test_s = scaler.transform(x_test)
-    joblib.dump({"scaler": scaler, "feature_names": FEATURE_NAMES}, artifacts / "preprocessor.joblib")
+    joblib.dump(
+        {"scaler": scaler, "feature_names": FEATURE_NAMES}, artifacts / "preprocessor.joblib"
+    )
 
     optuna_cfg = cfg.get("optuna", {})
     trials = n_optuna_trials if n_optuna_trials is not None else int(optuna_cfg.get("n_trials", 8))
@@ -211,7 +227,18 @@ def train_from_config(
         except Exception as exc:
             tracemalloc.stop()
             log.warning("model_fit_failed", model=name, error=str(exc))
-            comparison.append({"model": name, "error": str(exc), "pr_auc": 0.0, "recall": 0.0, "fpr": 1.0, "expected_cost": 1e9, "latency_ms_p50": 1e9, "rss_mb": 1e9})
+            comparison.append(
+                {
+                    "model": name,
+                    "error": str(exc),
+                    "pr_auc": 0.0,
+                    "recall": 0.0,
+                    "fpr": 1.0,
+                    "expected_cost": 1e9,
+                    "latency_ms_p50": 1e9,
+                    "rss_mb": 1e9,
+                }
+            )
             continue
         train_s = time.perf_counter() - t0
         _, peak = tracemalloc.get_traced_memory()
@@ -269,7 +296,9 @@ def train_from_config(
         }
         if mlflow_ok:
             with mlflow.start_run(run_name=name):
-                mlflow.log_params({"model": name, "threshold": threshold, "calibration": cal["method"]})
+                mlflow.log_params(
+                    {"model": name, "threshold": threshold, "calibration": cal["method"]}
+                )
                 log_metrics_safe({k: v for k, v in test_metrics.items() if not isinstance(v, dict)})
 
         # persist small sklearn-style bundle
@@ -296,7 +325,10 @@ def train_from_config(
     registry = {
         "champion": champion_name,
         "challenger": picked["ranked"][1]["model"] if len(picked["ranked"]) > 1 else None,
-        "aliases": {"champion": champion_name, "challenger": picked["ranked"][1]["model"] if len(picked["ranked"]) > 1 else None},
+        "aliases": {
+            "champion": champion_name,
+            "challenger": picked["ranked"][1]["model"] if len(picked["ranked"]) > 1 else None,
+        },
         "promotion_gate": gate,
         "why": picked["champion"]["why"],
         "selection_weights": weights,
@@ -314,7 +346,13 @@ def train_from_config(
         "feature_names": FEATURE_NAMES,
         "label_delay_days": label_delay,
         "optuna": {k: v for k, v in lgb_tune.items() if k != "study"},
-        "hash": sha256_json({"n_train": manifest["n_train"], "n_val": manifest["n_val"], "n_test": manifest["n_test"]}),
+        "hash": sha256_json(
+            {
+                "n_train": manifest["n_train"],
+                "n_val": manifest["n_val"],
+                "n_test": manifest["n_test"],
+            }
+        ),
     }
     _write_json(artifacts / "metrics.json", metrics_out)
     _write_json(artifacts / "model_comparison.json", comparison)
@@ -355,7 +393,10 @@ def train_from_config(
     )
 
     # keep a named champion pointer (small joblib)
-    joblib.dump(bundles[champion_name] | {"name": champion_name, "feature_names": FEATURE_NAMES}, artifacts / "champion.joblib")
+    joblib.dump(
+        bundles[champion_name] | {"name": champion_name, "feature_names": FEATURE_NAMES},
+        artifacts / "champion.joblib",
+    )
 
     train_f.to_parquet(Path("data/generated") / "transactions_features.parquet", index=False)
     return metrics_out

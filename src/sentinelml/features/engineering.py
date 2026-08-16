@@ -137,9 +137,7 @@ class FeatureState:
         var = (c.amount_sq / n_hist - mean * mean) if n_hist else 0.0
         std = float(np.sqrt(max(var, 1e-6)))
         z = (amount - mean) / std if n_hist else 0.0
-        avg_7d = (
-            float(sum(amt for _, amt, _ in c.events) / len(c.events)) if c.events else amount
-        )
+        avg_7d = float(sum(amt for _, amt, _ in c.events) / len(c.events)) if c.events else amount
         merchant_freq = float(c.merchant_counts.get(mid, 0))
         new_merchant = 0.0 if merchant_freq > 0 else 1.0
         time_since = (now_ts - c.last_ts) if c.last_ts is not None else float(WINDOW_7D)

@@ -1,0 +1,81 @@
+# Million-row simulator. Hours on a single GPU. Start with configs/cuda/large.yaml first.
+
+seed: 42
+device: cuda
+data_path: data/generated/gpu_transactions_full.parquet
+artifacts_dir: artifacts/gpu
+label_delay_days: 7
+
+split:
+  train_fraction: 0.60
+  val_fraction: 0.20
+  test_fraction: 0.20
+
+optuna:
+  n_trials: 80
+  timeout_seconds: 7200
+  metric: pr_auc
+
+selection:
+  weights:
+    pr_auc: 0.35
+    recall: 0.20
+    fpr_inverted: 0.15
+    cost_inverted: 0.20
+    latency_inverted: 0.05
+    memory_inverted: 0.05
+
+thresholds:
+  strategies:
+    - maximize_f1
+    - maximize_recall_at_max_fpr
+    - minimize_configured_cost
+  max_fpr: 0.05
+  default_strategy: minimize_configured_cost
+
+decision:
+  allow_max: 0.20
+  review_max: 0.70
+  default_ambiguous: REVIEW
+
+models:
+  dummy:
+    enabled: true
+  logistic:
+    enabled: true
+    C: 1.0
+    max_iter: 800
+  lightgbm:
+    enabled: true
+    n_estimators: 800
+    max_depth: 10
+    learning_rate: 0.03
+    num_leaves: 64
+  hist_gbdt:
+    enabled: false
+  xgboost:
+    enabled: true
+    n_estimators: 800
+    max_depth: 10
+    learning_rate: 0.03
+    device: cuda
+  mlp_torch:
+    enabled: true
+    hidden_dims: [512, 256, 128]
+    epochs: 60
+    batch_size: 4096
+    lr: 0.0005
+    device: cuda
+  mlp_sklearn:
+    enabled: false
+  isolation_forest:
+    enabled: true
+    n_estimators: 300
+    contamination: 0.03
+
+calibration:
+  methods: [none, platt, isotonic]
+  apply_if_improves: brier
+  reject_if_hurts:
+    pr_auc_drop: 0.02
+    cost_increase_ratio: 0.15

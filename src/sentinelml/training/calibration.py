@@ -53,7 +53,13 @@ def choose_calibration(
     best_name = "none"
     best_p = p_val
     best_brier = base["brier"]
-    results = {"none": {"brier": base["brier"], "pr_auc": base["pr_auc"], "expected_cost": base["expected_cost"]}}
+    results = {
+        "none": {
+            "brier": base["brier"],
+            "pr_auc": base["pr_auc"],
+            "expected_cost": base["expected_cost"],
+        }
+    }
     for method in ("platt", "isotonic"):
         try:
             cal = ProbabilityCalibrator(method)

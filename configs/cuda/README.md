@@ -1,15 +1,12 @@
-# CUDA / GPU configs (not executed on this machine)
+# CUDA / GPU configs
 
-This MacBook Pro M4 has no NVIDIA GPU. Files here document a production GPU
-profile for a different host. Do **not** treat numbers in comments as measured
-results from this repository's smoke run.
+Files in this folder are for a **Linux NVIDIA workstation**. They were **not** executed on the Apple Silicon smoke machine.
 
-Suggested GPU training (unexecuted):
+| Config | Rows (simulator) | Intent |
+|---|---|---|
+| `large.yaml` | ~200k | First real GPU run (`make gpu-train`) |
+| `full.yaml` | ~1M | Longer run (`make gpu-train GPU_CONFIG=configs/cuda/full.yaml`) |
 
-- CUDA 12.x PyTorch wheels
-- Larger LightGBM `n_estimators`
-- MLP hidden `[128, 64]` and more epochs
-- Optuna trials >= 40
+Playbook: [GPU_SETUP.md](../../GPU_SETUP.md).
 
-Any README metric must still come from `artifacts/*.json` produced on the
-machine that actually ran the command.
+Any number quoted as a GPU result must come from `artifacts/gpu/metrics.json` on the machine that ran the command.

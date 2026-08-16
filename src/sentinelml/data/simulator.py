@@ -151,7 +151,9 @@ def generate_transactions(cfg: SimulatorConfig | None = None) -> pd.DataFrame:
                 "merchant_id": merchant_id,
                 "amount": round(amount, 2),
                 "currency": "USD",
-                "channel": str(rng.choice(["card_present", "card_not_present", "online"], p=[0.6, 0.25, 0.15])),
+                "channel": str(
+                    rng.choice(["card_present", "card_not_present", "online"], p=[0.6, 0.25, 0.15])
+                ),
                 "is_fraud": is_fraud,
                 "fraud_scenario": scenario,
                 "schema_version": "1.0",

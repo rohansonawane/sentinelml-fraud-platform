@@ -17,6 +17,8 @@ Legitimate spend is concentrated near a customer’s home location and daytime h
 
 Default smoke scale on this host: 6000 transactions (see `artifacts/split_manifest.json`: 3608/1241/1151 train/val/test), not millions.
 
+GPU workstation scale: `make gpu-data` writes ~200k rows to `data/generated/gpu_transactions.parquet`; `make gpu-data-full` writes ~1M. Those runs are **not** this Mac.
+
 ## Splits
 
 **Temporal only.** TRAIN is earlier, VAL later, TEST latest. Exact timestamp boundaries and row hashes are in `artifacts/split_manifest.json`. There is no random row split.

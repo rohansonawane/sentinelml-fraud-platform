@@ -26,7 +26,9 @@ class StreamProcessor:
     ) -> None:
         self.broker = broker
         self.state = state or FeatureState(label_delay_days=label_delay_days)
-        self.store = store or FeatureStore(feature_state=self.state, label_delay_days=label_delay_days)
+        self.store = store or FeatureStore(
+            feature_state=self.state, label_delay_days=label_delay_days
+        )
         self.inference = inference
         self.processed = 0
         self.alerts = 0
@@ -64,7 +66,9 @@ class StreamProcessor:
             "schema_version": "1.0",
             "event_id": f"P-{event.event_id}",
             "transaction_id": event.transaction_id,
-            "event_time": event.event_time.isoformat() if isinstance(event.event_time, datetime) else str(event.event_time),
+            "event_time": event.event_time.isoformat()
+            if isinstance(event.event_time, datetime)
+            else str(event.event_time),
             "customer_id": event.customer_id,
             "merchant_id": event.merchant_id,
             "amount": event.amount,

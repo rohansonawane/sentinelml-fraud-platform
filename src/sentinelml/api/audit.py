@@ -63,7 +63,12 @@ class AuditStore:
     def recent(self, limit: int = 100, decision: str | None = None) -> list[dict[str, Any]]:
         stmt = select(InferenceLog).order_by(InferenceLog.id.desc()).limit(limit)
         if decision:
-            stmt = select(InferenceLog).where(InferenceLog.decision == decision).order_by(InferenceLog.id.desc()).limit(limit)
+            stmt = (
+                select(InferenceLog)
+                .where(InferenceLog.decision == decision)
+                .order_by(InferenceLog.id.desc())
+                .limit(limit)
+            )
         with self.Session() as session:
             rows = session.scalars(stmt).all()
         return [_to_dict(r) for r in rows]

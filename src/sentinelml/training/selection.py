@@ -14,7 +14,9 @@ def selection_score(row: dict[str, Any], weights: dict[str, float]) -> float:
     pr = float(row.get("pr_auc") or 0.0)
     recall = float(row.get("recall") or 0.0)
     fpr_inv = 1.0 - float(row.get("fpr") or 0.0)
-    cost_inv = invert_minmax(float(row.get("expected_cost") or 0.0), 0.0, float(row.get("cost_scale") or 1.0))
+    cost_inv = invert_minmax(
+        float(row.get("expected_cost") or 0.0), 0.0, float(row.get("cost_scale") or 1.0)
+    )
     lat_inv = invert_minmax(float(row.get("latency_ms_p50") or 0.0), 0.05, 50.0)
     mem_inv = invert_minmax(float(row.get("rss_mb") or 1.0), 1.0, 800.0)
     return (

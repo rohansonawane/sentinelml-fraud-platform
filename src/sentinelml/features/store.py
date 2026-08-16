@@ -79,7 +79,9 @@ class RedisOnlineStore(OnlineStore):
         if redis_lib is None:
             raise RuntimeError("redis package not installed")
         self.prefix = prefix
-        self.client = redis_lib.Redis.from_url(url, decode_responses=True, socket_connect_timeout=0.4)
+        self.client = redis_lib.Redis.from_url(
+            url, decode_responses=True, socket_connect_timeout=0.4
+        )
 
     def _key(self, entity_key: str) -> str:
         return f"{self.prefix}:feat:{entity_key}"
@@ -135,7 +137,9 @@ class FeatureStore:
         return vectorize(feats).tolist()
 
 
-def build_online_store(backend: str = "memory", redis_url: str = "redis://localhost:6379/2") -> OnlineStore:
+def build_online_store(
+    backend: str = "memory", redis_url: str = "redis://localhost:6379/2"
+) -> OnlineStore:
     if backend == "redis":
         try:
             store = RedisOnlineStore(url=redis_url)

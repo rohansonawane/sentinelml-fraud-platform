@@ -26,6 +26,34 @@ def test_dummy_majority_on_imbalance() -> None:
     assert (p == 0).all()
 
 
+def test_xgboost_cpu_device() -> None:
+    from sentinelml.models.tree import HAS_XGBOOST, XGBoostModel
+
+    if not HAS_XGBOOST:
+        return
+    rng = np.random.default_rng(1)
+    x = rng.normal(size=(40, 5))
+    y = (x[:, 0] > 0).astype(int)
+    m = XGBoostModel(n_estimators=8, max_depth=2, device="cpu")
+    m.fit(x, y)
+    p = m.predict_proba(x)
+    assert p.shape == (40,)
+    assert m.get_metadata()["device"] == "cpu"
+
+
+def test_check_gpu_refuses_apple_silicon() -> None:
+    import platform
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    script = Path(__file__).resolve().parents[2] / "scripts" / "check_gpu.py"
+    result = subprocess.run([sys.executable, str(script)], capture_output=True, text=True)
+    if platform.system() == "Darwin" and platform.machine() == "arm64":
+        assert result.returncode == 1
+        assert "Apple Silicon" in result.stderr or "smoke machine" in result.stderr
+
+
 def test_logistic_trains() -> None:
     rng = np.random.default_rng(0)
     x = rng.normal(size=(80, 4))
@@ -39,8 +67,26 @@ def test_logistic_trains() -> None:
 
 def test_champion_not_auroc_only() -> None:
     rows = [
-        {"model": "a", "pr_auc": 0.9, "recall": 0.1, "fpr": 0.01, "expected_cost": 100, "latency_ms_p50": 1, "rss_mb": 10, "roc_auc": 0.99},
-        {"model": "b", "pr_auc": 0.7, "recall": 0.8, "fpr": 0.04, "expected_cost": 20, "latency_ms_p50": 2, "rss_mb": 12, "roc_auc": 0.8},
+        {
+            "model": "a",
+            "pr_auc": 0.9,
+            "recall": 0.1,
+            "fpr": 0.01,
+            "expected_cost": 100,
+            "latency_ms_p50": 1,
+            "rss_mb": 10,
+            "roc_auc": 0.99,
+        },
+        {
+            "model": "b",
+            "pr_auc": 0.7,
+            "recall": 0.8,
+            "fpr": 0.04,
+            "expected_cost": 20,
+            "latency_ms_p50": 2,
+            "rss_mb": 12,
+            "roc_auc": 0.8,
+        },
     ]
     weights = {
         "pr_auc": 0.35,
@@ -52,4 +98,7 @@ def test_champion_not_auroc_only() -> None:
     }
     picked = pick_champion(rows, weights)
     assert "selection_score" in picked["champion"]
-    assert "AUROC-only" not in picked["champion"]["why"] or "Not selected on AUROC" in picked["champion"]["why"]
+    assert (
+        "AUROC-only" not in picked["champion"]["why"]
+        or "Not selected on AUROC" in picked["champion"]["why"]
+    )

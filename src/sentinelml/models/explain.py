@@ -34,7 +34,9 @@ def tree_feature_contributions(model: Any, x_row: np.ndarray) -> dict[str, float
             if isinstance(values, list):
                 values = values[1] if len(values) > 1 else values[0]
             arr = np.asarray(values).reshape(-1)
-            return {FEATURE_NAMES[i]: float(arr[i]) for i in range(min(len(arr), len(FEATURE_NAMES)))}
+            return {
+                FEATURE_NAMES[i]: float(arr[i]) for i in range(min(len(arr), len(FEATURE_NAMES)))
+            }
         except Exception:
             pass
     if hasattr(model, "feature_importances_"):
@@ -43,7 +45,10 @@ def tree_feature_contributions(model: Any, x_row: np.ndarray) -> dict[str, float
     if hasattr(model, "coef_"):
         coef = np.asarray(model.coef_, dtype=np.float64).reshape(-1)
         contrib = coef * x_row.reshape(-1)[: len(coef)]
-        return {FEATURE_NAMES[i]: float(contrib[i]) for i in range(min(len(contrib), len(FEATURE_NAMES)))}
+        return {
+            FEATURE_NAMES[i]: float(contrib[i])
+            for i in range(min(len(contrib), len(FEATURE_NAMES)))
+        }
     return {name: 0.0 for name in FEATURE_NAMES}
 
 

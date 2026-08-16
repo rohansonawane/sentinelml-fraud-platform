@@ -70,10 +70,14 @@ def main() -> None:
         "elapsed_seconds": elapsed,
         "target_rate_eps": args.rate,
         "actual_throughput_eps": n / elapsed if elapsed else 0.0,
-        "predictions_queued": broker.qsize(TOPICS["predictions"]) if hasattr(broker, "qsize") else None,
+        "predictions_queued": broker.qsize(TOPICS["predictions"])
+        if hasattr(broker, "qsize")
+        else None,
         "all_processed": n == len(events) and proc.errors == 0,
         "avg_infer_latency_ms": (
-            float(sum(proc.last_latencies) / len(proc.last_latencies)) if proc.last_latencies else None
+            float(sum(proc.last_latencies) / len(proc.last_latencies))
+            if proc.last_latencies
+            else None
         ),
     }
     out = Path("artifacts/stream_demo.json")

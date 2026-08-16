@@ -32,8 +32,7 @@ def main() -> None:
     # activity pattern: shift hours into night
     times = pd.to_datetime(current["event_time"], utc=True)
     current["event_time"] = [
-        t.replace(hour=int(h))
-        for t, h in zip(times, rng.integers(0, 5, len(current)), strict=True)
+        t.replace(hour=int(h)) for t, h in zip(times, rng.integers(0, 5, len(current)), strict=True)
     ]
     # prevalence change
     current["is_fraud"] = (rng.random(len(current)) < 0.18).astype(int)

@@ -25,11 +25,22 @@ Seeds: simulator `--seed 42`, Optuna TPESampler seed 42, IsolationForest `random
 
 `artifacts/split_manifest.json` records `train_start`, `train_end`, `val_end`, `test_end`, row counts, fraud rates, and SHA-256 hashes of each partition.
 
-## What we did not reproduce here
+## GPU workstation (NVIDIA)
+
+See [GPU_SETUP.md](GPU_SETUP.md). Simulator seed stays `42`.
+
+```bash
+make gpu-setup && make gpu-check
+make gpu-data
+make gpu-train
+make gpu-eval
+```
+
+## What we did not reproduce on the Mac
 
 - Live Kafka (Docker daemon down at discovery; compose file is present).
 - `feast apply` (Feast extra optional; `feature_repo/` layout is real).
-- CUDA training (`configs/cuda/` is documentation only).
+- CUDA training on this Mac (`configs/cuda/` is executed on an NVIDIA box; see GPU_SETUP.md).
 - OpenML download (optional secondary dataset).
 
 ## Artifacts that must exist for a claims-bearing README

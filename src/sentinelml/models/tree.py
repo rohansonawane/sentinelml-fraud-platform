@@ -100,29 +100,52 @@ class HistGBDTModel:
 
 class XGBoostModel:
     name = "xgboost"
-    version = "0.1.0"
+    version = "0.2.0"
 
-    def __init__(self, n_estimators: int = 80, max_depth: int = 4, learning_rate: float = 0.08) -> None:
+    def __init__(
+        self,
+        n_estimators: int = 80,
+        max_depth: int = 4,
+        learning_rate: float = 0.08,
+        device: str = "cpu",
+        **kwargs: Any,
+    ) -> None:
         if not HAS_XGBOOST:
             raise RuntimeError("xgboost is not installed")
-        self.model = xgb.XGBClassifier(
-            n_estimators=n_estimators,
-            max_depth=max_depth,
-            learning_rate=learning_rate,
-            eval_metric="logloss",
-            n_jobs=1,
-            tree_method="hist",
-        )
+        params: dict[str, Any] = {
+            "n_estimators": n_estimators,
+            "max_depth": max_depth,
+            "learning_rate": learning_rate,
+            "eval_metric": "logloss",
+            "n_jobs": 1,
+            "tree_method": "hist",
+            "device": device,
+        }
+        params.update(kwargs)
+        self.device = device
+        self.model = xgb.XGBClassifier(**params)
 
     def fit(self, x: np.ndarray, y: np.ndarray) -> None:
-        # scale_pos_weight from class imbalance
         pos = max(int(y.sum()), 1)
         neg = max(int(len(y) - pos), 1)
         self.model.set_params(scale_pos_weight=neg / pos)
-        self.model.fit(x, y)
+        try:
+            self.model.fit(x, y)
+        except Exception:
+            if self.device != "cpu":
+                self.device = "cpu"
+                self.model.set_params(device="cpu")
+                self.model.fit(x, y)
+            else:
+                raise
 
     def predict_proba(self, x: np.ndarray) -> np.ndarray:
         return ensure_2d_proba(self.model.predict_proba(x))
 
     def get_metadata(self) -> dict[str, object]:
-        return {"name": self.name, "version": self.version, "framework": "xgboost"}
+        return {
+            "name": self.name,
+            "version": self.version,
+            "framework": "xgboost",
+            "device": self.device,
+        }
